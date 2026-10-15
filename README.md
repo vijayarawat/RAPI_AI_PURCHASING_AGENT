@@ -11,21 +11,21 @@ Implements **Scenario 1** (review a purchase recommendation) end to end.
 
 ```mermaid
 flowchart LR
-    UI[React UI] -->|POST /run, /approve, /reject| API[FastAPI backend]
-    UI -->|POST /admin/scenario/name| API
-    UI -->|POST /evals| API
-    CLI[python agent.py / evals.py] --> AGENT
+    UI[React UI] -->|HTTP| API[FastAPI backend]
+    CLI[CLI scripts] --> AGENT
 
-    API --> AGENT[Agent loop - agent.py]
-    AGENT <-->|read-only tool calls| LLM[Gemini 2.5 Flash]
-    AGENT -->|pre-flight check| VALIDATOR[validator.py]
-    AGENT -->|execute + post-execution check| VALIDATOR
-    VALIDATOR --> DATA[(data.py - in-memory mock state)]
+    API --> AGENT[Agent loop]
+    AGENT <-->|tool calls| LLM[Gemini 2.5 Flash]
+    AGENT --> VALIDATOR[Validator]
+    VALIDATOR --> DATA[(Mock data store)]
     AGENT --> DATA
 
-    EVALS[evals.py] --> AGENT
-    EVALS -->|independent ground truth| DATA
+    EVALS[Evals] --> AGENT
+    EVALS --> DATA
 ```
+
+The UI calls the API (`/run`, `/approve`, `/reject`, `/admin/scenario/{name}`, `/evals`); the CLI
+scripts (`agent.py`, `evals.py`) call the agent loop directly, without the API, for quick testing.
 
 - **Mock data / mock API** (`data.py`): inventory, demand forecast, open POs, supplier terms,
   budget and storage for a single product (`SKU-1001`) at one node, held as plain in-memory
