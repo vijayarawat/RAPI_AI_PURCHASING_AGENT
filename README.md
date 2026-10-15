@@ -189,10 +189,3 @@ python evals.py
 
 or from the UI's "Evaluation" section ("Run evals" button), which calls `POST /evals` and renders
 the same rows as a table.
-
-Because the LLM is not fully deterministic, a case can occasionally flip to a different
-(still valid) supplier/quantity choice — the checks are written against whatever the agent
-actually chose, not a hardcoded answer, so a different-but-still-correct choice still passes.
-A known gap: the checks confirm the chosen quantity is *feasible*, not that it's the exact
-cheapest option — a valid-but-suboptimal choice (e.g. the pricier supplier when the cheaper one
-would also work) currently still passes.
