@@ -5,24 +5,12 @@ accept/modify/reject it or investigate further, and — for anything it decides 
 the result before and after acting. It is not a chatbot: it makes, executes and validates a
 purchasing decision.
 
-Implements **Scenario 1** (review a purchase recommendation) end to end.
+Implements **Scenario 1** (review a purchase recommendation) end to end, plus constraint-driven
+situations (budget/storage caps) that mirror **Scenario 4**.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    UI[React UI] -->|HTTP| API[FastAPI backend]
-    CLI[CLI scripts] --> AGENT
-
-    API --> AGENT[Agent loop]
-    AGENT <-->|tool calls| LLM[Gemini 2.5 Flash]
-    AGENT --> VALIDATOR[Validator]
-    VALIDATOR --> DATA[(Mock data store)]
-    AGENT --> DATA
-
-    EVALS[Evals] --> AGENT
-    EVALS --> DATA
-```
+![Architecture diagram](RAPI.png)
 
 The UI calls the API (`/run`, `/approve`, `/reject`, `/admin/scenario/{name}`, `/evals`); the CLI
 scripts (`agent.py`, `evals.py`) call the agent loop directly, without the API, for quick testing.
@@ -59,7 +47,7 @@ Requires Python 3.10+ and Node 18+.
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env        # then put your Gemini API key in .env
+cp .env.example .env        # Add Gemini API key in .env
 ```
 
 Start the backend (from the project root):
